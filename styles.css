@@ -76,9 +76,17 @@ body {
 
 h1 {
   margin: 0;
-  font-size: clamp(2.25rem, 12vw, 4.2rem);
-  line-height: 0.98;
+  font-size: clamp(1.9rem, 9vw, 3.35rem);
+  line-height: 1;
   letter-spacing: 0;
+}
+
+.title-long {
+  font-size: clamp(1.65rem, 7vw, 2.55rem);
+}
+
+.title-extra-long {
+  font-size: clamp(1.35rem, 6vw, 2rem);
 }
 
 .speaker,
@@ -87,11 +95,16 @@ h1 {
   color: var(--muted);
   font-size: clamp(1.1rem, 5vw, 1.45rem);
   line-height: 1.2;
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 .room {
   margin-top: 8px;
   color: var(--warn);
+  -webkit-line-clamp: 3;
 }
 
 .timer-panel {
