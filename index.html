@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AWE Chair Cue</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app" aria-label="Conference chair assistant">
+      <section class="status-bar" aria-live="polite">
+        <span id="clock">--:--</span>
+        <span id="session-count">Session 1 / 4</span>
+      </section>
+
+      <section class="cue-panel" aria-live="polite">
+        <p class="kicker" id="mode-label">Now</p>
+        <h1 id="talk-title">Loading agenda...</h1>
+        <p class="speaker" id="speaker-name"></p>
+        <p class="room" id="room-name"></p>
+      </section>
+
+      <section class="timer-panel">
+        <div class="timer-ring" aria-label="Time remaining">
+          <span id="time-remaining">--</span>
+        </div>
+        <p id="cue-text">Preparing cues.</p>
+      </section>
+
+      <nav class="controls" aria-label="App controls">
+        <button id="prev-button" type="button" aria-label="Previous agenda item">Prev</button>
+        <button id="mode-button" type="button">Cue</button>
+        <button id="next-button" type="button" aria-label="Next agenda item">Next</button>
+      </nav>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
