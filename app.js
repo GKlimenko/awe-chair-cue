@@ -152,6 +152,10 @@ function showMenu() {
   controlsEl.classList.add("hidden");
   countEl.textContent = `${allSessions.length} sessions`;
   document.title = `${agendaMeta.event}: Choose Track`;
+  trackListEl.scrollTop = 0;
+  requestAnimationFrame(() => {
+    trackListEl.querySelector(".track-button")?.focus();
+  });
 }
 
 function showSession() {
@@ -189,6 +193,18 @@ function renderTracks() {
   });
 }
 
+function focusTrackByOffset(offset) {
+  const buttons = Array.from(trackListEl.querySelectorAll(".track-button"));
+  if (!buttons.length) {
+    return;
+  }
+
+  const currentIndex = Math.max(0, buttons.indexOf(document.activeElement));
+  const nextIndex = (currentIndex + offset + buttons.length) % buttons.length;
+  buttons[nextIndex]?.focus();
+  buttons[nextIndex]?.scrollIntoView({ block: "nearest" });
+}
+
 function selectTrack(track) {
   selectedTrack = track;
   filteredSessions =
@@ -207,7 +223,7 @@ function renderSession() {
   titleEl.textContent = item.title;
   fitTitle(item.title);
   speakerEl.textContent = cleanSpeaker(item.speaker);
-  roomEl.textContent = [item.day, item.start, item.room].filter(Boolean).join(" · ");
+  roomEl.textContent = [item.day, item.start, item.room].filter(Boolean).join(" / ");
   remainingEl.textContent = status.label;
   descriptionEl.textContent = cleanDescription(item);
   document.title = `${agendaMeta.event}: ${item.title}`;
@@ -247,7 +263,24 @@ nextButton.addEventListener("click", () => moveSession(1));
 menuButton.addEventListener("click", showMenu);
 
 window.addEventListener("keydown", (event) => {
-  if (!trackMenuEl.classList.contains("hidden")) {
+  const menuIsOpen = !trackMenuEl.classList.contains("hidden");
+
+  if (menuIsOpen) {
+    if (event.key === "ArrowDown" || event.key === "ArrowRight") {
+      event.preventDefault();
+      focusTrackByOffset(1);
+    }
+
+    if (event.key === "ArrowUp" || event.key === "ArrowLeft") {
+      event.preventDefault();
+      focusTrackByOffset(-1);
+    }
+
+    if (event.key === " " || event.key === "Enter") {
+      event.preventDefault();
+      document.activeElement?.click();
+    }
+
     return;
   }
 
