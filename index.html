@@ -7,29 +7,35 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <main class="app" aria-label="Conference chair assistant">
+    <main class="app" aria-label="AWE attendee guide">
       <section class="status-bar" aria-live="polite">
         <span id="clock">--:--</span>
-        <span id="session-count">Session 1 / 4</span>
+        <span id="session-count">Loading</span>
       </section>
 
-      <section class="cue-panel" aria-live="polite">
-        <p class="kicker" id="mode-label">Now</p>
+      <section class="track-menu" id="track-menu" aria-label="Select a track">
+        <p class="kicker">Choose Track</p>
+        <h1>AWE Now</h1>
+        <div class="track-list" id="track-list"></div>
+      </section>
+
+      <section class="cue-panel hidden" id="session-view" aria-live="polite">
+        <p class="kicker" id="track-label">Track</p>
         <h1 id="talk-title">Loading agenda...</h1>
         <p class="speaker" id="speaker-name"></p>
         <p class="room" id="room-name"></p>
       </section>
 
-      <section class="timer-panel">
+      <section class="timer-panel hidden" id="description-panel">
         <div class="timer-ring" aria-label="Time remaining">
           <span id="time-remaining">--</span>
         </div>
-        <p id="cue-text">Preparing cues.</p>
+        <p id="description-text">Preparing description.</p>
       </section>
 
-      <nav class="controls" aria-label="App controls">
+      <nav class="controls hidden" id="controls" aria-label="App controls">
         <button id="prev-button" type="button" aria-label="Previous agenda item">Prev</button>
-        <button id="mode-button" type="button">Cue</button>
+        <button id="menu-button" type="button">Menu</button>
         <button id="next-button" type="button" aria-label="Next agenda item">Next</button>
       </nav>
     </main>

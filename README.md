@@ -2,7 +2,7 @@
 
 A tiny static conference-chair assistant prototype for Meta Ray-Ban Display-style web app testing.
 
-The app now loads the official AWE USA 2026 agenda from `agenda.json`.
+The app now loads the official AWE USA 2026 agenda from `agenda.json`, including session descriptions.
 
 ## Open Locally
 
@@ -23,14 +23,19 @@ Open `agenda.json` to inspect the synced AWE schedule. Each session supports:
 - `room`
 - `start`
 - `end`
-- `intro`
-- `qa`
 - `next`
+- `description`
+
+## App Flow
+
+The first screen asks attendees to choose a track. After a track is selected, the app jumps to the current session for that track based on AWE's Pacific time zone. If nothing is active, it shows the next upcoming session.
+
+Use `Menu` to return to track selection and choose a different track.
 
 ## Controls
 
 - `Prev`: previous agenda item
-- `Cue`: cycle Now, Intro cue, Q&A cue, Next
+- `Menu`: return to track selection
 - `Next`: next agenda item
 - Keyboard: left arrow, right arrow, space, enter
 

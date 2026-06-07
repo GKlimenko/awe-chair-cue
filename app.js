@@ -8,35 +8,38 @@ const fallbackAgenda = [
     track: "Main Stage",
     start: "09:00 AM",
     end: "09:20 AM",
-    intro: "Welcome the room, thank AWE, introduce the futures track.",
-    qa: "Invite one concise question, then point people to hallway follow-up.",
-    next: "Spatial AI panel with Jordan Ellis.",
+    description: "A short opening session for the XR futures track.",
+    next: "Spatial AI Panel",
   },
 ];
 
-const modes = ["now", "intro", "qa", "next"];
-let agenda = fallbackAgenda;
+let allSessions = fallbackAgenda;
+let filteredSessions = fallbackAgenda;
 let currentIndex = 0;
-let modeIndex = 0;
+let selectedTrack = "";
 let agendaMeta = {
-  event: "AWE Chair Cue",
-  source: "",
+  event: "AWE USA 2026",
+  timezone: "America/Los_Angeles",
 };
 
+const trackMenuEl = document.querySelector("#track-menu");
+const trackListEl = document.querySelector("#track-list");
+const sessionViewEl = document.querySelector("#session-view");
+const descriptionPanelEl = document.querySelector("#description-panel");
+const controlsEl = document.querySelector("#controls");
 const clockEl = document.querySelector("#clock");
 const countEl = document.querySelector("#session-count");
-const modeEl = document.querySelector("#mode-label");
+const trackLabelEl = document.querySelector("#track-label");
 const titleEl = document.querySelector("#talk-title");
 const speakerEl = document.querySelector("#speaker-name");
 const roomEl = document.querySelector("#room-name");
 const remainingEl = document.querySelector("#time-remaining");
-const cueEl = document.querySelector("#cue-text");
+const descriptionEl = document.querySelector("#description-text");
 const prevButton = document.querySelector("#prev-button");
 const nextButton = document.querySelector("#next-button");
-const modeButton = document.querySelector("#mode-button");
+const menuButton = document.querySelector("#menu-button");
 
-function parseSessionDate(item, field) {
-  const time = item[field] || item.start || "12:00 AM";
+function timeToMinutes(time) {
   const [clock, meridiem = "AM"] = time.split(" ");
   const [rawHours, minutes = "0"] = clock.split(":").map(Number);
   const hours =
@@ -46,23 +49,25 @@ function parseSessionDate(item, field) {
         ? 0
         : rawHours;
 
-  return new Date(`${item.date}T${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:00`);
+  return hours * 60 + Number(minutes);
 }
 
-function findBestStartingIndex(items) {
-  const now = new Date();
-  const activeIndex = items.findIndex((item) => {
-    const start = parseSessionDate(item, "start");
-    const end = parseSessionDate(item, "end");
-    return start <= now && now <= end;
-  });
+function getEventNow() {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: agendaMeta.timezone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).formatToParts(new Date());
+  const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
 
-  if (activeIndex >= 0) {
-    return activeIndex;
-  }
-
-  const upcomingIndex = items.findIndex((item) => parseSessionDate(item, "start") > now);
-  return upcomingIndex >= 0 ? upcomingIndex : 0;
+  return {
+    date: `${values.year}-${values.month}-${values.day}`,
+    minutes: Number(values.hour) * 60 + Number(values.minute),
+  };
 }
 
 function formatClock() {
@@ -72,16 +77,45 @@ function formatClock() {
   }).format(new Date());
 }
 
-function getRemainingLabel(item) {
-  const now = new Date();
-  const end = parseSessionDate(item, "end");
-  const remaining = Math.ceil((end.getTime() - now.getTime()) / 60000);
+function sessionStatus(item) {
+  const now = getEventNow();
+  const start = timeToMinutes(item.start || "12:00 AM");
+  const end = timeToMinutes(item.end || item.start || "12:00 AM");
 
-  if (remaining > 0 && remaining < 180) {
-    return `${remaining}m`;
+  if (item.date === now.date && start <= now.minutes && now.minutes <= end) {
+    const remaining = Math.max(1, end - now.minutes);
+    return { label: `${remaining}m`, rank: 0 };
   }
 
-  return item.end || "--";
+  if (item.date === now.date && now.minutes < start) {
+    return { label: item.start, rank: 1 };
+  }
+
+  return { label: item.start || "--", rank: 2 };
+}
+
+function findBestStartingIndex(sessions) {
+  const now = getEventNow();
+  const activeIndex = sessions.findIndex((item) => {
+    const start = timeToMinutes(item.start || "12:00 AM");
+    const end = timeToMinutes(item.end || item.start || "12:00 AM");
+    return item.date === now.date && start <= now.minutes && now.minutes <= end;
+  });
+
+  if (activeIndex >= 0) {
+    return activeIndex;
+  }
+
+  const upcomingToday = sessions.findIndex((item) => {
+    return item.date === now.date && timeToMinutes(item.start || "12:00 AM") > now.minutes;
+  });
+
+  if (upcomingToday >= 0) {
+    return upcomingToday;
+  }
+
+  const upcomingLater = sessions.findIndex((item) => item.date > now.date);
+  return upcomingLater >= 0 ? upcomingLater : 0;
 }
 
 function cleanSpeaker(value) {
@@ -97,42 +131,12 @@ function cleanSpeaker(value) {
   return speakers.join("; ");
 }
 
-function getModeContent(item) {
-  const mode = modes[modeIndex];
-
-  if (mode === "intro") {
-    return {
-      label: "Intro cue",
-      title: item.title,
-      cue: item.intro || `Introduce: ${item.title}`,
-      button: "Q&A",
-    };
+function cleanDescription(item) {
+  if (item.description) {
+    return item.description;
   }
 
-  if (mode === "qa") {
-    return {
-      label: "Q&A cue",
-      title: item.title,
-      cue: item.qa || "Invite one concise audience question.",
-      button: "Next",
-    };
-  }
-
-  if (mode === "next") {
-    return {
-      label: "Next",
-      title: item.next || agenda[currentIndex + 1]?.title || "End of agenda",
-      cue: "Preview the next item and keep the transition tight.",
-      button: "Now",
-    };
-  }
-
-  return {
-    label: item.day || "Now",
-    title: item.title,
-    cue: `${item.start || "--"}-${item.end || "--"} · ${item.track || "AWE"}`,
-    button: "Cue",
-  };
+  return `${item.track || "AWE"} session. Full description was not listed.`;
 }
 
 function fitTitle(text) {
@@ -140,30 +144,83 @@ function fitTitle(text) {
   titleEl.classList.toggle("title-extra-long", text.length > 92);
 }
 
-function render() {
-  const item = agenda[currentIndex];
-  const content = getModeContent(item);
+function showMenu() {
+  selectedTrack = "";
+  trackMenuEl.classList.remove("hidden");
+  sessionViewEl.classList.add("hidden");
+  descriptionPanelEl.classList.add("hidden");
+  controlsEl.classList.add("hidden");
+  countEl.textContent = `${allSessions.length} sessions`;
+  document.title = `${agendaMeta.event}: Choose Track`;
+}
+
+function showSession() {
+  trackMenuEl.classList.add("hidden");
+  sessionViewEl.classList.remove("hidden");
+  descriptionPanelEl.classList.remove("hidden");
+  controlsEl.classList.remove("hidden");
+  renderSession();
+}
+
+function renderTracks() {
+  const counts = new Map();
+  allSessions.forEach((session) => {
+    const track = session.track || "Other";
+    counts.set(track, (counts.get(track) || 0) + 1);
+  });
+
+  const tracks = ["All Tracks", ...Array.from(counts.keys()).sort((a, b) => a.localeCompare(b))];
+  trackListEl.innerHTML = "";
+
+  tracks.forEach((track) => {
+    const button = document.createElement("button");
+    const name = document.createElement("span");
+    const count = document.createElement("span");
+
+    button.type = "button";
+    button.className = "track-button";
+    name.className = "track-name";
+    name.textContent = track;
+    count.className = "track-count";
+    count.textContent = track === "All Tracks" ? allSessions.length : counts.get(track);
+    button.append(name, count);
+    button.addEventListener("click", () => selectTrack(track));
+    trackListEl.appendChild(button);
+  });
+}
+
+function selectTrack(track) {
+  selectedTrack = track;
+  filteredSessions =
+    track === "All Tracks" ? allSessions : allSessions.filter((session) => session.track === track);
+  currentIndex = findBestStartingIndex(filteredSessions);
+  showSession();
+}
+
+function renderSession() {
+  const item = filteredSessions[currentIndex];
+  const status = sessionStatus(item);
 
   clockEl.textContent = formatClock();
-  countEl.textContent = `${currentIndex + 1} / ${agenda.length}`;
-  modeEl.textContent = content.label;
-  titleEl.textContent = content.title;
-  fitTitle(content.title);
+  countEl.textContent = `${currentIndex + 1} / ${filteredSessions.length}`;
+  trackLabelEl.textContent = selectedTrack || item.track || "AWE";
+  titleEl.textContent = item.title;
+  fitTitle(item.title);
   speakerEl.textContent = cleanSpeaker(item.speaker);
-  roomEl.textContent = [item.day, item.room, item.track].filter(Boolean).join(" · ");
-  remainingEl.textContent = getRemainingLabel(item);
-  cueEl.textContent = content.cue;
-  modeButton.textContent = content.button;
+  roomEl.textContent = [item.day, item.start, item.room].filter(Boolean).join(" · ");
+  remainingEl.textContent = status.label;
+  descriptionEl.textContent = cleanDescription(item);
   document.title = `${agendaMeta.event}: ${item.title}`;
 }
 
 function moveSession(direction) {
-  currentIndex = (currentIndex + direction + agenda.length) % agenda.length;
-  modeIndex = 0;
-  render();
+  currentIndex = (currentIndex + direction + filteredSessions.length) % filteredSessions.length;
+  renderSession();
 }
 
 async function loadAgenda() {
+  clockEl.textContent = formatClock();
+
   try {
     const response = await fetch("./agenda.json", { cache: "no-store" });
     if (!response.ok) {
@@ -171,29 +228,29 @@ async function loadAgenda() {
     }
 
     const payload = await response.json();
-    agenda = payload.sessions && payload.sessions.length ? payload.sessions : fallbackAgenda;
+    allSessions = payload.sessions && payload.sessions.length ? payload.sessions : fallbackAgenda;
     agendaMeta = {
       event: payload.event || "AWE USA 2026",
-      source: payload.source || "",
+      timezone: payload.timezone || "America/Los_Angeles",
     };
-    currentIndex = findBestStartingIndex(agenda);
   } catch (error) {
     console.warn(error);
-    agenda = fallbackAgenda;
-    currentIndex = 0;
+    allSessions = fallbackAgenda;
   }
 
-  render();
+  renderTracks();
+  showMenu();
 }
 
 prevButton.addEventListener("click", () => moveSession(-1));
 nextButton.addEventListener("click", () => moveSession(1));
-modeButton.addEventListener("click", () => {
-  modeIndex = (modeIndex + 1) % modes.length;
-  render();
-});
+menuButton.addEventListener("click", showMenu);
 
 window.addEventListener("keydown", (event) => {
+  if (!trackMenuEl.classList.contains("hidden")) {
+    return;
+  }
+
   if (event.key === "ArrowLeft") {
     moveSession(-1);
   }
@@ -202,11 +259,15 @@ window.addEventListener("keydown", (event) => {
     moveSession(1);
   }
 
-  if (event.key === " " || event.key === "Enter") {
-    event.preventDefault();
-    modeButton.click();
+  if (event.key === "Escape" || event.key.toLowerCase() === "m") {
+    showMenu();
   }
 });
 
 loadAgenda();
-setInterval(render, 30000);
+setInterval(() => {
+  clockEl.textContent = formatClock();
+  if (trackMenuEl.classList.contains("hidden")) {
+    renderSession();
+  }
+}, 30000);
