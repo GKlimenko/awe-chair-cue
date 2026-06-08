@@ -6,6 +6,8 @@
   --text: #f7f2e8;
   --muted: #aeb8c5;
   --accent: #45d5b4;
+  --current-track-color: #45d5b4;
+  --current-track-ink: #090b0f;
   --warn: #ffcd66;
   --line: rgba(255, 255, 255, 0.13);
 }
@@ -62,6 +64,7 @@ body {
 
 .track-menu,
 .cue-panel {
+  border-color: color-mix(in srgb, var(--current-track-color) 58%, var(--line));
   min-height: 0;
   display: flex;
   flex-direction: column;
@@ -99,6 +102,8 @@ body {
   text-align: left;
   font-size: 1.45rem;
   line-height: 1.08;
+  border-left: 10px solid var(--track-color, var(--accent));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--track-color, var(--accent)) 24%, transparent);
 }
 
 .track-name {
@@ -108,13 +113,13 @@ body {
 }
 
 .track-count {
-  color: var(--accent);
+  color: var(--track-color, var(--accent));
   font-size: 1.05rem;
 }
 
 .kicker {
   margin: 0 0 10px;
-  color: var(--accent);
+  color: var(--current-track-color);
   font-size: 0.95rem;
   font-weight: 800;
   letter-spacing: 0.08em;
@@ -178,7 +183,7 @@ h1 {
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  border: 8px solid var(--accent);
+  border: 8px solid var(--current-track-color);
   background: var(--panel-strong);
   text-align: center;
   font-size: 1.08rem;
@@ -225,19 +230,19 @@ button {
 
 button:focus,
 button:focus-visible {
-  outline: 3px solid var(--accent);
+  outline: 3px solid var(--track-color, var(--current-track-color));
   outline-offset: 2px;
 }
 
 .track-button:hover,
 .track-button:focus {
-  background: var(--accent);
-  color: var(--bg);
+  background: var(--track-color, var(--accent));
+  color: var(--track-ink, var(--bg));
 }
 
 .track-button:hover .track-count,
 .track-button:focus .track-count {
-  color: var(--bg);
+  color: var(--track-ink, var(--bg));
 }
 
 button:active {

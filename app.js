@@ -6,6 +6,7 @@ const fallbackAgenda = [
     speaker: "Maya Chen",
     room: "Main Stage",
     track: "Main Stage",
+    trackColor: "#ff7f69",
     start: "09:00 AM",
     end: "09:20 AM",
     description: "A short opening session for the XR futures track.",
@@ -38,6 +39,38 @@ const descriptionEl = document.querySelector("#description-text");
 const prevButton = document.querySelector("#prev-button");
 const nextButton = document.querySelector("#next-button");
 const menuButton = document.querySelector("#menu-button");
+
+function normalizeColor(color) {
+  if (!color || !/^#?[0-9a-f]{6}$/i.test(color.trim())) {
+    return "#45d5b4";
+  }
+
+  return color.trim().startsWith("#") ? color.trim() : `#${color.trim()}`;
+}
+
+function trackInkFor(color) {
+  const hex = normalizeColor(color).slice(1);
+  const red = Number.parseInt(hex.slice(0, 2), 16);
+  const green = Number.parseInt(hex.slice(2, 4), 16);
+  const blue = Number.parseInt(hex.slice(4, 6), 16);
+  const brightness = (red * 299 + green * 587 + blue * 114) / 1000;
+
+  return brightness > 150 ? "#090b0f" : "#f7f2e8";
+}
+
+function colorForTrack(track) {
+  if (track === "All Tracks") {
+    return "#45d5b4";
+  }
+
+  return normalizeColor(allSessions.find((session) => session.track === track)?.trackColor);
+}
+
+function applyCurrentTrackColor(color) {
+  const normalized = normalizeColor(color);
+  document.documentElement.style.setProperty("--current-track-color", normalized);
+  document.documentElement.style.setProperty("--current-track-ink", trackInkFor(normalized));
+}
 
 function timeToMinutes(time) {
   const [clock, meridiem = "AM"] = time.split(" ");
@@ -193,6 +226,7 @@ function fitTitle(text) {
 
 function showMenu() {
   selectedTrack = "";
+  applyCurrentTrackColor("#45d5b4");
   trackMenuEl.classList.remove("hidden");
   sessionViewEl.classList.add("hidden");
   descriptionPanelEl.classList.add("hidden");
@@ -227,9 +261,12 @@ function renderTracks() {
     const button = document.createElement("button");
     const name = document.createElement("span");
     const count = document.createElement("span");
+    const trackColor = colorForTrack(track);
 
     button.type = "button";
     button.className = "track-button";
+    button.style.setProperty("--track-color", trackColor);
+    button.style.setProperty("--track-ink", trackInkFor(trackColor));
     name.className = "track-name";
     name.textContent = track;
     count.className = "track-count";
@@ -263,6 +300,7 @@ function selectTrack(track) {
 function renderSession() {
   const item = filteredSessions[currentIndex];
   const status = sessionStatus(item);
+  applyCurrentTrackColor(item.trackColor);
 
   clockEl.textContent = formatClock();
   countEl.textContent = `${currentIndex + 1} / ${filteredSessions.length}`;
