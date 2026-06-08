@@ -518,14 +518,6 @@ window.addEventListener("keydown", (event) => {
     return;
   }
 
-  if (event.key === "ArrowLeft") {
-    moveSession(-1);
-  }
-
-  if (event.key === "ArrowRight") {
-    moveSession(1);
-  }
-
   if (event.key === "Escape" || event.key.toLowerCase() === "m") {
     showMenu();
   }
