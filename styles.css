@@ -36,7 +36,7 @@ body {
   min-height: min(760px, calc(100vh - 32px));
   max-height: calc(100vh - 32px);
   display: grid;
-  grid-template-rows: auto minmax(210px, 1fr) auto auto;
+  grid-template-rows: auto minmax(190px, 1fr) auto auto;
   gap: 12px;
 }
 
@@ -65,7 +65,7 @@ body {
   min-height: 0;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   padding: 24px;
 }
 
@@ -123,24 +123,32 @@ body {
 
 h1 {
   margin: 0;
-  font-size: clamp(1.75rem, 8vw, 3.05rem);
-  line-height: 1;
+  font-size: clamp(1.62rem, 7.4vw, 2.85rem);
+  line-height: 1.04;
   letter-spacing: 0;
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
 }
 
 .title-long {
-  font-size: clamp(1.45rem, 6.4vw, 2.25rem);
+  font-size: clamp(1.34rem, 5.9vw, 2.05rem);
 }
 
 .title-extra-long {
-  font-size: clamp(1.18rem, 5.4vw, 1.72rem);
+  font-size: clamp(1.12rem, 5vw, 1.58rem);
+}
+
+.title-ultra-long {
+  font-size: clamp(1rem, 4.6vw, 1.42rem);
 }
 
 .speaker,
 .room {
-  margin: 12px 0 0;
+  margin: 10px 0 0;
   color: var(--muted);
-  font-size: clamp(1rem, 4.2vw, 1.25rem);
+  font-size: clamp(0.94rem, 3.8vw, 1.14rem);
   line-height: 1.2;
   display: -webkit-box;
   overflow: hidden;
@@ -149,13 +157,13 @@ h1 {
 }
 
 .room {
-  margin-top: 8px;
+  margin-top: 6px;
   color: var(--warn);
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 2;
 }
 
 .timer-panel {
-  min-height: 154px;
+  min-height: 166px;
   display: grid;
   grid-template-columns: 98px 1fr;
   align-items: center;
@@ -187,12 +195,12 @@ h1 {
 #description-text {
   margin: 0;
   color: var(--text);
-  font-size: clamp(0.98rem, 4vw, 1.22rem);
-  line-height: 1.22;
+  font-size: clamp(0.9rem, 3.55vw, 1.08rem);
+  line-height: 1.18;
   display: -webkit-box;
   overflow: hidden;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 6;
+  -webkit-line-clamp: 7;
 }
 
 .controls {
@@ -249,12 +257,12 @@ button:active {
 
   .track-menu,
   .cue-panel {
-    padding: 18px;
+    padding: 14px;
   }
 
   .timer-panel {
     grid-template-columns: 92px 1fr;
-    min-height: 148px;
+    min-height: 158px;
     gap: 10px;
     padding: 10px;
   }
@@ -271,6 +279,6 @@ button:active {
   }
 
   #description-text {
-    -webkit-line-clamp: 6;
+    -webkit-line-clamp: 7;
   }
 }

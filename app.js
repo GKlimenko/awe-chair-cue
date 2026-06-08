@@ -123,25 +123,37 @@ function cleanSpeaker(value) {
     return "No speaker listed";
   }
 
-  const speakers = value.split(";").map((speaker) => speaker.trim()).filter(Boolean);
-  if (speakers.length > 2) {
-    return `${speakers.slice(0, 2).join("; ")} +${speakers.length - 2}`;
+  const speakers = value
+    .split(";")
+    .map((speaker) => speaker.trim().split(" - ")[0])
+    .filter(Boolean);
+  if (speakers.length > 3) {
+    return `${speakers.slice(0, 3).join(", ")} +${speakers.length - 3}`;
   }
 
-  return speakers.join("; ");
+  return speakers.join(", ");
 }
 
 function cleanDescription(item) {
-  if (item.description) {
-    return item.description;
+  const description = item.description || `${item.track || "AWE"} session. Full description was not listed.`;
+
+  if (description.length <= 260) {
+    return description;
   }
 
-  return `${item.track || "AWE"} session. Full description was not listed.`;
+  const firstSentence = description.match(/^(.{80,260}?[.!?])\s/)?.[1];
+  if (firstSentence) {
+    return firstSentence;
+  }
+
+  const brief = description.slice(0, 240);
+  return `${brief.slice(0, brief.lastIndexOf(" "))}...`;
 }
 
 function fitTitle(text) {
   titleEl.classList.toggle("title-long", text.length > 58);
   titleEl.classList.toggle("title-extra-long", text.length > 92);
+  titleEl.classList.toggle("title-ultra-long", text.length > 122);
 }
 
 function showMenu() {
@@ -234,6 +246,40 @@ function moveSession(direction) {
   renderSession();
 }
 
+function setupIntentButton(button, action) {
+  let isPressed = false;
+
+  button.addEventListener("pointerenter", () => {
+    button.focus();
+  });
+
+  button.addEventListener("pointerdown", () => {
+    isPressed = true;
+  });
+
+  button.addEventListener("pointerleave", () => {
+    isPressed = false;
+  });
+
+  button.addEventListener("pointerup", () => {
+    if (!isPressed) {
+      return;
+    }
+
+    isPressed = false;
+    action();
+  });
+
+  button.addEventListener("keydown", (event) => {
+    if (event.key !== " " && event.key !== "Enter") {
+      return;
+    }
+
+    event.preventDefault();
+    action();
+  });
+}
+
 async function loadAgenda() {
   clockEl.textContent = formatClock();
 
@@ -258,9 +304,9 @@ async function loadAgenda() {
   showMenu();
 }
 
-prevButton.addEventListener("click", () => moveSession(-1));
-nextButton.addEventListener("click", () => moveSession(1));
-menuButton.addEventListener("click", showMenu);
+setupIntentButton(prevButton, () => moveSession(-1));
+setupIntentButton(nextButton, () => moveSession(1));
+setupIntentButton(menuButton, showMenu);
 
 window.addEventListener("keydown", (event) => {
   const menuIsOpen = !trackMenuEl.classList.contains("hidden");
