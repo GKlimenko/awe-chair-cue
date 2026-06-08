@@ -40,7 +40,6 @@ const remainingEl = document.querySelector("#time-remaining");
 const sessionTimeEl = document.querySelector("#session-time");
 const sessionPlaceEl = document.querySelector("#session-place");
 const descriptionLabelEl = document.querySelector("#description-label");
-const descriptionTitleEl = document.querySelector("#description-title");
 const descriptionFullEl = document.querySelector("#description-full");
 const prevButton = document.querySelector("#prev-button");
 const nextButton = document.querySelector("#next-button");
@@ -185,15 +184,32 @@ function cleanDescription(item) {
 }
 
 function fitTitle(text) {
-  titleEl.classList.toggle("title-long", text.length > 58);
-  titleEl.classList.toggle("title-extra-long", text.length > 92);
-  titleEl.classList.toggle("title-ultra-long", text.length > 122);
-}
+  titleEl.classList.remove("title-long", "title-extra-long", "title-ultra-long");
 
-function fitDescriptionTitle(text) {
-  descriptionTitleEl.classList.toggle("title-long", text.length > 58);
-  descriptionTitleEl.classList.toggle("title-extra-long", text.length > 92);
-  descriptionTitleEl.classList.toggle("title-ultra-long", text.length > 122);
+  if (text.length > 58) {
+    titleEl.classList.add("title-long");
+  }
+
+  if (text.length > 92) {
+    titleEl.classList.add("title-extra-long");
+  }
+
+  if (text.length > 122) {
+    titleEl.classList.add("title-ultra-long");
+  }
+
+  requestAnimationFrame(() => {
+    const overflows = titleEl.scrollHeight > titleEl.clientHeight;
+    if (!overflows) {
+      return;
+    }
+
+    if (!titleEl.classList.contains("title-extra-long")) {
+      titleEl.classList.add("title-extra-long");
+    } else {
+      titleEl.classList.add("title-ultra-long");
+    }
+  });
 }
 
 function showMenu() {
@@ -248,10 +264,8 @@ function showDescription() {
   descriptionControlsEl.classList.remove("hidden");
 
   descriptionLabelEl.textContent = item.track || "Description";
-  descriptionTitleEl.textContent = item.title;
   descriptionFullEl.textContent = cleanDescription(item);
   descriptionFullEl.scrollTop = 0;
-  fitDescriptionTitle(item.title);
   document.title = `${agendaMeta.event}: Description`;
 }
 
