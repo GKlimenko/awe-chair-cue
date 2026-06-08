@@ -28,6 +28,8 @@ const trackListEl = document.querySelector("#track-list");
 const sessionViewEl = document.querySelector("#session-view");
 const descriptionPanelEl = document.querySelector("#description-panel");
 const controlsEl = document.querySelector("#controls");
+const fullDescriptionViewEl = document.querySelector("#description-view");
+const descriptionControlsEl = document.querySelector("#description-controls");
 const clockEl = document.querySelector("#clock");
 const countEl = document.querySelector("#session-count");
 const trackLabelEl = document.querySelector("#track-label");
@@ -35,10 +37,17 @@ const titleEl = document.querySelector("#talk-title");
 const speakerEl = document.querySelector("#speaker-name");
 const roomEl = document.querySelector("#room-name");
 const remainingEl = document.querySelector("#time-remaining");
-const descriptionEl = document.querySelector("#description-text");
+const sessionTimeEl = document.querySelector("#session-time");
+const sessionPlaceEl = document.querySelector("#session-place");
+const descriptionLabelEl = document.querySelector("#description-label");
+const descriptionTitleEl = document.querySelector("#description-title");
+const descriptionFullEl = document.querySelector("#description-full");
 const prevButton = document.querySelector("#prev-button");
 const nextButton = document.querySelector("#next-button");
-const menuButton = document.querySelector("#menu-button");
+const descriptionButton = document.querySelector("#description-button");
+const descriptionBackButton = document.querySelector("#description-back-button");
+const descriptionMenuButton = document.querySelector("#description-menu-button");
+const descriptionNextButton = document.querySelector("#description-next-button");
 
 function normalizeColor(color) {
   if (!color || !/^#?[0-9a-f]{6}$/i.test(color.trim())) {
@@ -168,60 +177,23 @@ function cleanSpeaker(value) {
 }
 
 function cleanDescription(item) {
-  const description = item.description || `${item.track || "AWE"} session. Full description was not listed.`;
-  const cleaned = description
+  return (item.description || `${item.track || "AWE"} session. Full description was not listed.`)
     .replace(/^coming soon!?$/i, "Description coming soon.")
     .replace(/^requires registration and acceptance to the hack\.\s*/i, "")
     .replace(/\s+/g, " ")
     .trim();
-
-  if (cleaned.length <= 95) {
-    return cleaned;
-  }
-
-  const sentences = cleaned.match(/[^.!?]+[.!?]/g) || [];
-  const preferred = sentences
-    .map((sentence) => sentence.trim().replace(/^but\s+/i, ""))
-    .find((sentence) => {
-      return (
-        sentence.length >= 45 &&
-        sentence.length <= 105 &&
-        !sentence.endsWith("?") &&
-        !/^the era\b/i.test(sentence) &&
-        !/^deadline\b/i.test(sentence) &&
-        !/^more information\b/i.test(sentence)
-      );
-    });
-
-  if (preferred) {
-    return `${preferred.charAt(0).toUpperCase()}${preferred.slice(1)}`;
-  }
-
-  const contrastClause = cleaned.match(/,\s*but\s+([^.!?]{45,120}[.!?])/i)?.[1];
-  if (contrastClause) {
-    return `${contrastClause.charAt(0).toUpperCase()}${contrastClause.slice(1)}`;
-  }
-
-  const summaryLead = cleaned
-    .replace(/^this session (will )?(explores?|covers?|discusses?|introduces?)\s+/i, "")
-    .replace(/^in this session,\s*/i, "")
-    .replace(/^participants will\s+/i, "Learn ");
-  const brief = summaryLead.slice(0, 88);
-  const breakPoint = Math.max(
-    brief.lastIndexOf("."),
-    brief.lastIndexOf(";"),
-    brief.lastIndexOf(","),
-    brief.lastIndexOf(" ")
-  );
-  const trimmed = brief.slice(0, breakPoint > 55 ? breakPoint : brief.length).trim();
-
-  return `${trimmed.replace(/[,:;.-]+$/, "")}.`;
 }
 
 function fitTitle(text) {
   titleEl.classList.toggle("title-long", text.length > 58);
   titleEl.classList.toggle("title-extra-long", text.length > 92);
   titleEl.classList.toggle("title-ultra-long", text.length > 122);
+}
+
+function fitDescriptionTitle(text) {
+  descriptionTitleEl.classList.toggle("title-long", text.length > 58);
+  descriptionTitleEl.classList.toggle("title-extra-long", text.length > 92);
+  descriptionTitleEl.classList.toggle("title-ultra-long", text.length > 122);
 }
 
 function showMenu() {
@@ -235,6 +207,8 @@ function showMenu() {
   sessionViewEl.classList.add("hidden");
   descriptionPanelEl.classList.add("hidden");
   controlsEl.classList.add("hidden");
+  fullDescriptionViewEl.classList.add("hidden");
+  descriptionControlsEl.classList.add("hidden");
   countEl.textContent = `${allSessions.length} sessions`;
   document.title = `${agendaMeta.event}: Choose Track`;
   trackListEl.scrollTop = 0;
@@ -258,7 +232,27 @@ function showSession() {
   sessionViewEl.classList.remove("hidden");
   descriptionPanelEl.classList.remove("hidden");
   controlsEl.classList.remove("hidden");
+  fullDescriptionViewEl.classList.add("hidden");
+  descriptionControlsEl.classList.add("hidden");
   renderSession();
+}
+
+function showDescription() {
+  const item = filteredSessions[currentIndex];
+
+  trackMenuEl.classList.add("hidden");
+  sessionViewEl.classList.add("hidden");
+  descriptionPanelEl.classList.add("hidden");
+  controlsEl.classList.add("hidden");
+  fullDescriptionViewEl.classList.remove("hidden");
+  descriptionControlsEl.classList.remove("hidden");
+
+  descriptionLabelEl.textContent = item.track || "Description";
+  descriptionTitleEl.textContent = item.title;
+  descriptionFullEl.textContent = cleanDescription(item);
+  descriptionFullEl.scrollTop = 0;
+  fitDescriptionTitle(item.title);
+  document.title = `${agendaMeta.event}: Description`;
 }
 
 function renderTracks() {
@@ -330,15 +324,21 @@ function renderSession() {
   titleEl.textContent = item.title;
   fitTitle(item.title);
   speakerEl.textContent = cleanSpeaker(item.speaker);
-  roomEl.textContent = [item.day, item.start, item.room].filter(Boolean).join(" / ");
+  roomEl.textContent = item.track || "";
   remainingEl.textContent = status.label;
-  descriptionEl.textContent = cleanDescription(item);
+  sessionTimeEl.textContent = [item.day, `${item.start}-${item.end}`].filter(Boolean).join(" / ");
+  sessionPlaceEl.textContent = item.room || "Room TBA";
   document.title = `${agendaMeta.event}: ${item.title}`;
 }
 
 function moveSession(direction) {
   currentIndex = (currentIndex + direction + filteredSessions.length) % filteredSessions.length;
   renderSession();
+}
+
+function moveSessionAndShow(direction) {
+  moveSession(direction);
+  showSession();
 }
 
 function setupIntentButton(button, action) {
@@ -401,7 +401,10 @@ async function loadAgenda() {
 
 setupIntentButton(prevButton, () => moveSession(-1));
 setupIntentButton(nextButton, () => moveSession(1));
-setupIntentButton(menuButton, showMenu);
+setupIntentButton(descriptionButton, showDescription);
+setupIntentButton(descriptionBackButton, showSession);
+setupIntentButton(descriptionMenuButton, showMenu);
+setupIntentButton(descriptionNextButton, () => moveSessionAndShow(1));
 
 window.addEventListener("keydown", (event) => {
   const menuIsOpen = !trackMenuEl.classList.contains("hidden");
@@ -435,6 +438,10 @@ window.addEventListener("keydown", (event) => {
 
   if (event.key === "Escape" || event.key.toLowerCase() === "m") {
     showMenu();
+  }
+
+  if (event.key.toLowerCase() === "i") {
+    showDescription();
   }
 });
 

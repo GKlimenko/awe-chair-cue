@@ -10,7 +10,7 @@
     <link rel="manifest" href="./manifest.webmanifest" />
     <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png" />
     <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
-    <link rel="stylesheet" href="./styles.css?v=12" />
+    <link rel="stylesheet" href="./styles.css?v=13" />
   </head>
   <body>
     <main class="app" aria-label="AWE attendee guide">
@@ -36,16 +36,31 @@
         <div class="timer-ring" aria-label="Time remaining">
           <span id="time-remaining">--</span>
         </div>
-        <p id="description-text">Preparing description.</p>
+        <div class="session-meta">
+          <p id="session-time">--</p>
+          <p id="session-place">--</p>
+        </div>
       </section>
 
       <nav class="controls hidden" id="controls" aria-label="App controls">
         <button id="prev-button" type="button" aria-label="Previous agenda item">Prev</button>
-        <button id="menu-button" type="button">Menu</button>
+        <button id="description-button" type="button">Info</button>
         <button id="next-button" type="button" aria-label="Next agenda item">Next</button>
+      </nav>
+
+      <section class="description-view hidden" id="description-view" aria-live="polite">
+        <p class="kicker" id="description-label">Description</p>
+        <h1 id="description-title">Session description</h1>
+        <p id="description-full">Preparing description.</p>
+      </section>
+
+      <nav class="controls hidden" id="description-controls" aria-label="Description controls">
+        <button id="description-back-button" type="button">Back</button>
+        <button id="description-menu-button" type="button">Menu</button>
+        <button id="description-next-button" type="button">Next</button>
       </nav>
     </main>
 
-    <script src="./app.js?v=12"></script>
+    <script src="./app.js?v=13"></script>
   </body>
 </html>

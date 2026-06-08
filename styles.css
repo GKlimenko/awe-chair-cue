@@ -45,6 +45,7 @@ body {
 .status-bar,
 .track-menu,
 .cue-panel,
+.description-view,
 .timer-panel,
 .controls {
   border: 1px solid var(--line);
@@ -63,7 +64,8 @@ body {
 }
 
 .track-menu,
-.cue-panel {
+.cue-panel,
+.description-view {
   border-color: color-mix(in srgb, var(--current-track-color) 58%, var(--line));
   min-height: 0;
   justify-content: flex-start;
@@ -79,6 +81,12 @@ body {
 .cue-panel {
   display: flex;
   flex-direction: column;
+}
+
+.description-view {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  overflow: hidden;
 }
 
 .hidden {
@@ -208,15 +216,40 @@ h1 {
   text-align: center;
 }
 
-#description-text {
+.session-meta {
+  min-width: 0;
+}
+
+.session-meta p {
   margin: 0;
+}
+
+#session-time {
   color: var(--text);
-  font-size: clamp(0.96rem, 3.8vw, 1.14rem);
+  font-size: clamp(1.24rem, 5vw, 1.55rem);
+  font-weight: 800;
+  line-height: 1.12;
+}
+
+#session-place {
+  margin-top: 10px;
+  color: var(--warn);
+  font-size: clamp(1rem, 4vw, 1.22rem);
   line-height: 1.18;
   display: -webkit-box;
   overflow: hidden;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 5;
+  -webkit-line-clamp: 3;
+}
+
+#description-full {
+  min-height: 0;
+  margin: 12px 0 0;
+  overflow: auto;
+  color: var(--text);
+  font-size: clamp(0.94rem, 3.6vw, 1.08rem);
+  line-height: 1.22;
+  scroll-behavior: auto;
 }
 
 .controls {
@@ -272,7 +305,8 @@ button:active {
   }
 
   .track-menu,
-  .cue-panel {
+  .cue-panel,
+  .description-view {
     padding: 12px 14px 14px;
   }
 
@@ -294,7 +328,7 @@ button:active {
     font-size: 1.4rem;
   }
 
-  #description-text {
-    -webkit-line-clamp: 5;
+  #description-full {
+    font-size: 0.96rem;
   }
 }
