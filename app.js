@@ -44,6 +44,7 @@ const descriptionFullEl = document.querySelector("#description-full");
 const prevButton = document.querySelector("#prev-button");
 const nextButton = document.querySelector("#next-button");
 const descriptionButton = document.querySelector("#description-button");
+const menuButton = document.querySelector("#menu-button");
 const descriptionBackButton = document.querySelector("#description-back-button");
 const descriptionMenuButton = document.querySelector("#description-menu-button");
 const descriptionNextButton = document.querySelector("#description-next-button");
@@ -416,6 +417,7 @@ async function loadAgenda() {
 setupIntentButton(prevButton, () => moveSession(-1));
 setupIntentButton(nextButton, () => moveSession(1));
 setupIntentButton(descriptionButton, showDescription);
+setupIntentButton(menuButton, showMenu);
 setupIntentButton(descriptionBackButton, showSession);
 setupIntentButton(descriptionMenuButton, showMenu);
 setupIntentButton(descriptionNextButton, () => moveSessionAndShow(1));
