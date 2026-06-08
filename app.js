@@ -243,6 +243,10 @@ function showMenu() {
     trackListEl.scrollTo({ top: 0, left: 0, behavior: "instant" });
     requestAnimationFrame(() => {
       const firstTrack = trackListEl.querySelector(".track-button");
+      if (firstTrack) {
+        setFocusedTrackButton(firstTrack);
+      }
+
       firstTrack?.scrollIntoView({ block: "start", inline: "nearest" });
       firstTrack?.focus({ preventScroll: true });
     });
@@ -282,8 +286,15 @@ function renderTracks() {
     count.className = "track-count";
     count.textContent = track === "All Tracks" ? allSessions.length : counts.get(track);
     button.append(name, count);
+    button.addEventListener("focus", () => setFocusedTrackButton(button));
     button.addEventListener("click", () => selectTrack(track));
     trackListEl.appendChild(button);
+  });
+}
+
+function setFocusedTrackButton(button) {
+  trackListEl.querySelectorAll(".track-button").forEach((trackButton) => {
+    trackButton.classList.toggle("is-focused", trackButton === button);
   });
 }
 
@@ -295,6 +306,7 @@ function focusTrackByOffset(offset) {
 
   const currentIndex = Math.max(0, buttons.indexOf(document.activeElement));
   const nextIndex = (currentIndex + offset + buttons.length) % buttons.length;
+  setFocusedTrackButton(buttons[nextIndex]);
   buttons[nextIndex]?.focus();
   buttons[nextIndex]?.scrollIntoView({ block: "nearest" });
 }

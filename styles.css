@@ -245,14 +245,14 @@ button:focus-visible {
   outline-offset: 2px;
 }
 
-.track-button:hover,
-.track-button:focus {
+.track-button:focus,
+.track-button.is-focused {
   background: var(--track-color, var(--accent));
   color: var(--track-ink, var(--bg));
 }
 
-.track-button:hover .track-count,
-.track-button:focus .track-count {
+.track-button:focus .track-count,
+.track-button.is-focused .track-count {
   color: var(--track-ink, var(--bg));
 }
 
