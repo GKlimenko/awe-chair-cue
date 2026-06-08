@@ -23,6 +23,8 @@ let agendaMeta = {
   timezone: "America/Los_Angeles",
 };
 
+const params = new URLSearchParams(window.location.search);
+
 const trackMenuEl = document.querySelector("#track-menu");
 const trackListEl = document.querySelector("#track-list");
 const sessionViewEl = document.querySelector("#session-view");
@@ -95,6 +97,11 @@ function timeToMinutes(time) {
 }
 
 function getEventNow() {
+  const testNow = getTestNow();
+  if (testNow) {
+    return testNow;
+  }
+
   const parts = new Intl.DateTimeFormat("en-US", {
     timeZone: agendaMeta.timezone,
     year: "numeric",
@@ -112,7 +119,74 @@ function getEventNow() {
   };
 }
 
+function getTestNow() {
+  const testDate = params.get("testDate");
+  const testTime = params.get("testTime");
+
+  if (!testDate || !testTime || !/^\d{4}-\d{2}-\d{2}$/.test(testDate)) {
+    return null;
+  }
+
+  const minutes = parseTestTime(testTime);
+  if (minutes === null) {
+    return null;
+  }
+
+  return {
+    date: testDate,
+    minutes,
+  };
+}
+
+function parseTestTime(value) {
+  const normalized = value.trim().toUpperCase().replace(/\s+/g, "");
+  const twelveHour = normalized.match(/^(\d{1,2})(?::(\d{2}))?(AM|PM)$/);
+
+  if (twelveHour) {
+    let hours = Number(twelveHour[1]);
+    const minutes = Number(twelveHour[2] || "0");
+
+    if (hours < 1 || hours > 12 || minutes > 59) {
+      return null;
+    }
+
+    if (twelveHour[3] === "PM" && hours !== 12) {
+      hours += 12;
+    }
+
+    if (twelveHour[3] === "AM" && hours === 12) {
+      hours = 0;
+    }
+
+    return hours * 60 + minutes;
+  }
+
+  const twentyFourHour = normalized.match(/^(\d{1,2}):(\d{2})$/);
+  if (!twentyFourHour) {
+    return null;
+  }
+
+  const hours = Number(twentyFourHour[1]);
+  const minutes = Number(twentyFourHour[2]);
+
+  if (hours > 23 || minutes > 59) {
+    return null;
+  }
+
+  return hours * 60 + minutes;
+}
+
 function formatClock() {
+  const testNow = getTestNow();
+  if (testNow) {
+    const hours = Math.floor(testNow.minutes / 60);
+    const minutes = testNow.minutes % 60;
+    const meridiem = hours >= 12 ? "PM" : "AM";
+    const displayHours = hours % 12 || 12;
+
+    return `TEST ${displayHours}:${String(minutes).padStart(2, "0")} ${meridiem}`;
+  }
+
   return new Intl.DateTimeFormat([], {
     hour: "numeric",
     minute: "2-digit",
