@@ -66,15 +66,19 @@ body {
 .cue-panel {
   border-color: color-mix(in srgb, var(--current-track-color) 58%, var(--line));
   min-height: 0;
-  display: flex;
-  flex-direction: column;
   justify-content: flex-start;
   padding: 24px;
 }
 
 .track-menu {
-  justify-content: flex-start;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
   overflow: hidden;
+}
+
+.cue-panel {
+  display: flex;
+  flex-direction: column;
 }
 
 .hidden {
@@ -85,7 +89,8 @@ body {
   min-height: 0;
   display: grid;
   gap: 10px;
-  margin-top: 18px;
+  align-content: start;
+  margin-top: 14px;
   overflow: auto;
   padding: 2px 4px 2px 0;
   scroll-padding-top: 2px;
@@ -135,6 +140,11 @@ h1 {
   overflow: hidden;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 4;
+}
+
+.track-menu h1 {
+  line-height: 1;
+  -webkit-line-clamp: 1;
 }
 
 .title-long {
@@ -262,7 +272,7 @@ button:active {
 
   .track-menu,
   .cue-panel {
-    padding: 14px;
+    padding: 12px 14px 14px;
   }
 
   .timer-panel {
