@@ -94,6 +94,7 @@ body {
   overflow: auto;
   padding: 2px 4px 2px 0;
   scroll-padding-top: 2px;
+  scroll-behavior: auto;
 }
 
 .track-button {

@@ -226,6 +226,10 @@ function fitTitle(text) {
 
 function showMenu() {
   selectedTrack = "";
+  if (document.activeElement instanceof HTMLElement) {
+    document.activeElement.blur();
+  }
+
   applyCurrentTrackColor("#45d5b4");
   trackMenuEl.classList.remove("hidden");
   sessionViewEl.classList.add("hidden");
@@ -234,8 +238,14 @@ function showMenu() {
   countEl.textContent = `${allSessions.length} sessions`;
   document.title = `${agendaMeta.event}: Choose Track`;
   trackListEl.scrollTop = 0;
+
   requestAnimationFrame(() => {
-    trackListEl.querySelector(".track-button")?.focus();
+    trackListEl.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    requestAnimationFrame(() => {
+      const firstTrack = trackListEl.querySelector(".track-button");
+      firstTrack?.scrollIntoView({ block: "start", inline: "nearest" });
+      firstTrack?.focus({ preventScroll: true });
+    });
   });
 }
 
