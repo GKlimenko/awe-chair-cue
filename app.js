@@ -136,18 +136,53 @@ function cleanSpeaker(value) {
 
 function cleanDescription(item) {
   const description = item.description || `${item.track || "AWE"} session. Full description was not listed.`;
+  const cleaned = description
+    .replace(/^coming soon!?$/i, "Description coming soon.")
+    .replace(/^requires registration and acceptance to the hack\.\s*/i, "")
+    .replace(/\s+/g, " ")
+    .trim();
 
-  if (description.length <= 260) {
-    return description;
+  if (cleaned.length <= 95) {
+    return cleaned;
   }
 
-  const firstSentence = description.match(/^(.{80,260}?[.!?])\s/)?.[1];
-  if (firstSentence) {
-    return firstSentence;
+  const sentences = cleaned.match(/[^.!?]+[.!?]/g) || [];
+  const preferred = sentences
+    .map((sentence) => sentence.trim().replace(/^but\s+/i, ""))
+    .find((sentence) => {
+      return (
+        sentence.length >= 45 &&
+        sentence.length <= 105 &&
+        !sentence.endsWith("?") &&
+        !/^the era\b/i.test(sentence) &&
+        !/^deadline\b/i.test(sentence) &&
+        !/^more information\b/i.test(sentence)
+      );
+    });
+
+  if (preferred) {
+    return `${preferred.charAt(0).toUpperCase()}${preferred.slice(1)}`;
   }
 
-  const brief = description.slice(0, 240);
-  return `${brief.slice(0, brief.lastIndexOf(" "))}...`;
+  const contrastClause = cleaned.match(/,\s*but\s+([^.!?]{45,120}[.!?])/i)?.[1];
+  if (contrastClause) {
+    return `${contrastClause.charAt(0).toUpperCase()}${contrastClause.slice(1)}`;
+  }
+
+  const summaryLead = cleaned
+    .replace(/^this session (will )?(explores?|covers?|discusses?|introduces?)\s+/i, "")
+    .replace(/^in this session,\s*/i, "")
+    .replace(/^participants will\s+/i, "Learn ");
+  const brief = summaryLead.slice(0, 88);
+  const breakPoint = Math.max(
+    brief.lastIndexOf("."),
+    brief.lastIndexOf(";"),
+    brief.lastIndexOf(","),
+    brief.lastIndexOf(" ")
+  );
+  const trimmed = brief.slice(0, breakPoint > 55 ? breakPoint : brief.length).trim();
+
+  return `${trimmed.replace(/[,:;.-]+$/, "")}.`;
 }
 
 function fitTitle(text) {

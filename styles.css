@@ -123,7 +123,7 @@ body {
 
 h1 {
   margin: 0;
-  font-size: clamp(1.62rem, 7.4vw, 2.85rem);
+  font-size: clamp(1.34rem, 6.1vw, 2.35rem);
   line-height: 1.04;
   letter-spacing: 0;
   display: -webkit-box;
@@ -133,15 +133,15 @@ h1 {
 }
 
 .title-long {
-  font-size: clamp(1.34rem, 5.9vw, 2.05rem);
+  font-size: clamp(1.12rem, 5.1vw, 1.72rem);
 }
 
 .title-extra-long {
-  font-size: clamp(1.12rem, 5vw, 1.58rem);
+  font-size: clamp(0.98rem, 4.45vw, 1.38rem);
 }
 
 .title-ultra-long {
-  font-size: clamp(1rem, 4.6vw, 1.42rem);
+  font-size: clamp(0.9rem, 4vw, 1.18rem);
 }
 
 .speaker,
@@ -195,12 +195,12 @@ h1 {
 #description-text {
   margin: 0;
   color: var(--text);
-  font-size: clamp(0.9rem, 3.55vw, 1.08rem);
+  font-size: clamp(0.96rem, 3.8vw, 1.14rem);
   line-height: 1.18;
   display: -webkit-box;
   overflow: hidden;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 7;
+  -webkit-line-clamp: 5;
 }
 
 .controls {
@@ -279,6 +279,6 @@ button:active {
   }
 
   #description-text {
-    -webkit-line-clamp: 7;
+    -webkit-line-clamp: 5;
   }
 }
