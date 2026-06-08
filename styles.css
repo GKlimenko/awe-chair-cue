@@ -142,14 +142,14 @@ body {
 
 h1 {
   margin: 0;
-  font-size: clamp(1.34rem, 6.1vw, 2.35rem);
+  font-size: clamp(1.48rem, 6.65vw, 2.55rem);
   line-height: 1.04;
   letter-spacing: 0;
   display: -webkit-box;
   overflow: hidden;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 4;
-  max-height: 4.45em;
+  max-height: 4.85em;
 }
 
 .track-menu h1 {
@@ -158,24 +158,24 @@ h1 {
 }
 
 .title-long {
-  font-size: clamp(1.12rem, 5.1vw, 1.72rem);
+  font-size: clamp(1.22rem, 5.55vw, 1.88rem);
 }
 
 .title-extra-long {
-  font-size: clamp(0.98rem, 4.45vw, 1.38rem);
+  font-size: clamp(1.06rem, 4.85vw, 1.5rem);
 }
 
 .title-ultra-long {
-  font-size: clamp(0.9rem, 4vw, 1.18rem);
+  font-size: clamp(0.96rem, 4.35vw, 1.28rem);
   line-height: 1;
-  max-height: 4.75em;
+  max-height: 5em;
 }
 
 .speaker,
 .room {
   margin: 12px 0 0;
   color: var(--muted);
-  font-size: clamp(1.16rem, 4.7vw, 1.42rem);
+  font-size: clamp(1.26rem, 5.15vw, 1.56rem);
   line-height: 1.2;
   display: -webkit-box;
   overflow: hidden;
@@ -186,13 +186,13 @@ h1 {
 .room {
   margin-top: 8px;
   color: var(--warn);
-  font-size: clamp(1.08rem, 4.3vw, 1.32rem);
+  font-size: clamp(1.18rem, 4.7vw, 1.44rem);
   font-weight: 800;
   -webkit-line-clamp: 2;
 }
 
 .timer-panel {
-  min-height: 166px;
+  min-height: 176px;
   display: grid;
   grid-template-columns: 98px 1fr;
   align-items: center;
@@ -231,7 +231,7 @@ h1 {
 
 #session-time {
   color: var(--text);
-  font-size: clamp(1.24rem, 5vw, 1.55rem);
+  font-size: clamp(1.38rem, 5.6vw, 1.72rem);
   font-weight: 800;
   line-height: 1.12;
 }
@@ -239,7 +239,7 @@ h1 {
 #session-place {
   margin-top: 10px;
   color: var(--warn);
-  font-size: clamp(1rem, 4vw, 1.22rem);
+  font-size: clamp(1.14rem, 4.6vw, 1.38rem);
   line-height: 1.18;
   display: -webkit-box;
   overflow: hidden;
@@ -252,8 +252,8 @@ h1 {
   margin: 8px 0 0;
   overflow: auto;
   color: var(--text);
-  font-size: clamp(1.1rem, 4.4vw, 1.34rem);
-  line-height: 1.24;
+  font-size: clamp(1.24rem, 4.95vw, 1.5rem);
+  line-height: 1.2;
   scroll-behavior: auto;
 }
 
@@ -316,12 +316,12 @@ button:active {
   }
 
   h1 {
-    max-height: 4.55em;
+    max-height: 5em;
   }
 
   .timer-panel {
     grid-template-columns: 92px 1fr;
-    min-height: 158px;
+    min-height: 166px;
     gap: 10px;
     padding: 10px;
   }
@@ -338,6 +338,6 @@ button:active {
   }
 
   #description-full {
-    font-size: 1.08rem;
+    font-size: 1.2rem;
   }
 }
