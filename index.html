@@ -5,7 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#45d5b4" />
     <meta name="application-name" content="AWE 2026" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="AWE 2026" />
+    <meta name="msapplication-TileColor" content="#090b0f" />
+    <meta name="msapplication-TileImage" content="/icons/icon-144.png" />
     <meta property="og:title" content="AWE 2026" />
     <meta property="og:image" content="/icons/icon-512.png" />
     <title>AWE 2026</title>
@@ -18,7 +23,7 @@
     <link rel="icon" type="image/png" sizes="96x96" href="/icons/icon-96.png" />
     <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-180.png" />
-    <link rel="stylesheet" href="./styles.css?v=21" />
+    <link rel="stylesheet" href="./styles.css?v=22" />
   </head>
   <body>
     <main class="app" aria-label="AWE attendee guide">
@@ -69,6 +74,13 @@
       </nav>
     </main>
 
-    <script src="./app.js?v=21"></script>
+    <script src="./app.js?v=22"></script>
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("/service-worker.js");
+        });
+      }
+    </script>
   </body>
 </html>
