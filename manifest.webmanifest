@@ -1,14 +1,14 @@
 {
   "id": "/",
-  "name": "AWE 2026",
-  "short_name": "AWE 2026",
+  "name": "AWE Guide",
+  "short_name": "AWE Guide",
   "description": "A glanceable AWE USA 2026 agenda guide for smart glasses.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "display_override": ["standalone", "minimal-ui"],
-  "background_color": "#090b0f",
-  "theme_color": "#45d5b4",
+  "background_color": "#100a1f",
+  "theme_color": "#b45cff",
   "orientation": "portrait",
   "categories": ["productivity", "travel", "utilities"],
   "icons": [

@@ -1,9 +1,9 @@
-const CACHE_NAME = "awe-2026-v2";
+const CACHE_NAME = "awe-guide-v3";
 const CORE_ASSETS = [
   "/",
   "/index.html",
-  "/styles.css?v=22",
-  "/app.js?v=22",
+  "/styles.css?v=23",
+  "/app.js?v=23",
   "/agenda.json",
   "/manifest.json",
   "/favicon.ico",

@@ -53,7 +53,7 @@ const descriptionNextButton = document.querySelector("#description-next-button")
 
 function normalizeColor(color) {
   if (!color || !/^#?[0-9a-f]{6}$/i.test(color.trim())) {
-    return "#45d5b4";
+    return "#b45cff";
   }
 
   return color.trim().startsWith("#") ? color.trim() : `#${color.trim()}`;
@@ -66,12 +66,12 @@ function trackInkFor(color) {
   const blue = Number.parseInt(hex.slice(4, 6), 16);
   const brightness = (red * 299 + green * 587 + blue * 114) / 1000;
 
-  return brightness > 150 ? "#090b0f" : "#f7f2e8";
+  return brightness > 150 ? "#100a1f" : "#fbf7ff";
 }
 
 function colorForTrack(track) {
   if (track === "All Tracks") {
-    return "#45d5b4";
+    return "#b45cff";
   }
 
   return normalizeColor(allSessions.find((session) => session.track === track)?.trackColor);
@@ -293,7 +293,7 @@ function showMenu() {
     document.activeElement.blur();
   }
 
-  applyCurrentTrackColor("#45d5b4");
+  applyCurrentTrackColor("#b45cff");
   trackMenuEl.classList.remove("hidden");
   sessionViewEl.classList.add("hidden");
   descriptionPanelEl.classList.add("hidden");
