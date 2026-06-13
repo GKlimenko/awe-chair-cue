@@ -107,23 +107,25 @@ body {
 
 .track-button {
   width: 100%;
-  min-height: 68px;
+  min-height: 72px;
   display: grid;
   grid-template-columns: 1fr auto;
   align-items: center;
   gap: 10px;
   padding: 10px 12px;
   text-align: left;
-  font-size: 1.45rem;
-  line-height: 1.08;
+  font-size: 1.34rem;
+  line-height: 1.16;
   border-left: 10px solid var(--track-color, var(--accent));
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--track-color, var(--accent)) 24%, transparent);
 }
 
 .track-name {
+  min-width: 0;
+  display: -webkit-box;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 .track-count {
@@ -143,13 +145,14 @@ body {
 h1 {
   margin: 0;
   font-size: clamp(1.48rem, 6.65vw, 2.55rem);
-  line-height: 1.04;
+  line-height: 1.1;
   letter-spacing: 0;
+  padding: 3px 0 8px;
   display: -webkit-box;
   overflow: hidden;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 4;
-  max-height: 4.85em;
+  -webkit-line-clamp: 5;
+  max-height: 5.7em;
 }
 
 .track-menu h1 {
@@ -158,17 +161,17 @@ h1 {
 }
 
 .title-long {
-  font-size: clamp(1.22rem, 5.55vw, 1.88rem);
+  font-size: clamp(1.16rem, 5.25vw, 1.78rem);
 }
 
 .title-extra-long {
-  font-size: clamp(1.06rem, 4.85vw, 1.5rem);
+  font-size: clamp(0.96rem, 4.35vw, 1.36rem);
 }
 
 .title-ultra-long {
-  font-size: clamp(0.96rem, 4.35vw, 1.28rem);
-  line-height: 1;
-  max-height: 5em;
+  font-size: clamp(0.84rem, 3.85vw, 1.12rem);
+  line-height: 1.08;
+  max-height: 5.9em;
 }
 
 .speaker,
@@ -176,19 +179,28 @@ h1 {
   margin: 12px 0 0;
   color: var(--muted);
   font-size: clamp(1.26rem, 5.15vw, 1.56rem);
-  line-height: 1.2;
+  line-height: 1.28;
+  padding: 2px 0 4px;
   display: -webkit-box;
   overflow: hidden;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 3;
+}
+
+.speaker-long {
+  font-size: clamp(1.08rem, 4.45vw, 1.32rem);
+}
+
+.speaker-extra-long {
+  font-size: clamp(0.96rem, 3.95vw, 1.16rem);
 }
 
 .room {
   margin-top: 8px;
   color: var(--warn);
-  font-size: clamp(1.18rem, 4.7vw, 1.44rem);
+  font-size: clamp(1rem, 4.05vw, 1.22rem);
   font-weight: 800;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 3;
 }
 
 .timer-panel {
@@ -233,14 +245,14 @@ h1 {
   color: var(--text);
   font-size: clamp(1.38rem, 5.6vw, 1.72rem);
   font-weight: 800;
-  line-height: 1.12;
+  line-height: 1.2;
 }
 
 #session-place {
   margin-top: 10px;
   color: var(--warn);
   font-size: clamp(1.14rem, 4.6vw, 1.38rem);
-  line-height: 1.18;
+  line-height: 1.26;
   display: -webkit-box;
   overflow: hidden;
   -webkit-box-orient: vertical;
@@ -316,7 +328,7 @@ button:active {
   }
 
   h1 {
-    max-height: 5em;
+    max-height: 5.9em;
   }
 
   .timer-panel {
@@ -333,8 +345,8 @@ button:active {
   }
 
   .track-button {
-    min-height: 66px;
-    font-size: 1.4rem;
+    min-height: 70px;
+    font-size: 1.26rem;
   }
 
   #description-full {

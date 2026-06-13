@@ -69,6 +69,10 @@ function trackInkFor(color) {
   return brightness > 150 ? "#100a1f" : "#fbf7ff";
 }
 
+function displayTrackName(track) {
+  return track || "AWE";
+}
+
 function colorForTrack(track) {
   if (track === "All Tracks") {
     return "#b45cff";
@@ -287,6 +291,31 @@ function fitTitle(text) {
   });
 }
 
+function fitSpeaker(text) {
+  speakerEl.classList.remove("speaker-long", "speaker-extra-long");
+
+  if (text.length > 42) {
+    speakerEl.classList.add("speaker-long");
+  }
+
+  if (text.length > 72) {
+    speakerEl.classList.add("speaker-extra-long");
+  }
+
+  requestAnimationFrame(() => {
+    const overflows = speakerEl.scrollHeight > speakerEl.clientHeight;
+    if (!overflows) {
+      return;
+    }
+
+    if (!speakerEl.classList.contains("speaker-long")) {
+      speakerEl.classList.add("speaker-long");
+    } else {
+      speakerEl.classList.add("speaker-extra-long");
+    }
+  });
+}
+
 function showMenu() {
   selectedTrack = "";
   if (document.activeElement instanceof HTMLElement) {
@@ -338,7 +367,7 @@ function showDescription() {
   fullDescriptionViewEl.classList.remove("hidden");
   descriptionControlsEl.classList.remove("hidden");
 
-  descriptionLabelEl.textContent = item.track || "Description";
+  descriptionLabelEl.textContent = displayTrackName(item.track || "Description");
   descriptionFullEl.textContent = cleanDescription(item);
   descriptionFullEl.scrollTop = 0;
   document.title = `${agendaMeta.event}: Description`;
@@ -365,7 +394,7 @@ function renderTracks() {
     button.style.setProperty("--track-color", trackColor);
     button.style.setProperty("--track-ink", trackInkFor(trackColor));
     name.className = "track-name";
-    name.textContent = track;
+    name.textContent = displayTrackName(track);
     count.className = "track-count";
     count.textContent = track === "All Tracks" ? allSessions.length : counts.get(track);
     button.append(name, count);
@@ -409,11 +438,13 @@ function renderSession() {
 
   clockEl.textContent = formatClock();
   countEl.textContent = `${currentIndex + 1} / ${filteredSessions.length}`;
-  trackLabelEl.textContent = selectedTrack || item.track || "AWE";
+  trackLabelEl.textContent = displayTrackName(selectedTrack || item.track || "AWE");
   titleEl.textContent = item.title;
   fitTitle(item.title);
-  speakerEl.textContent = cleanSpeaker(item.speaker);
-  roomEl.textContent = item.track || "";
+  const speakerText = cleanSpeaker(item.speaker);
+  speakerEl.textContent = speakerText;
+  fitSpeaker(speakerText);
+  roomEl.textContent = displayTrackName(item.track);
   remainingEl.textContent = status.label;
   sessionTimeEl.textContent = [item.day, `${item.start}-${item.end}`].filter(Boolean).join(" / ");
   sessionPlaceEl.textContent = item.room || "Room TBA";
